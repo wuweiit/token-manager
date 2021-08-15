@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.wuweiit.manager.token.autoconfigure.TokenManagerRedisAutoConfiguration, \
+com.wuweiit.manager.token.autoconfigure.TokenManagerAutoConfiguration
