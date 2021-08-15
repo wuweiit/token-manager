@@ -47,7 +47,7 @@ TokenManager原理图如下所示：
 ```
 <!-- 开发者：marker 三方Token管理器 -->
 <dependency>
-    <groupId>com.wuweiit</groupId>
+    <groupId>com.wuweibi</groupId>
     <artifactId>token-manager</artifactId>
     <version>0.0.1</version>
 </dependency>
