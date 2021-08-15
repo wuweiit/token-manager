@@ -24,7 +24,7 @@ import static com.wuweiit.manager.token.config.properties.TokenManagerProperties
 @ConfigurationProperties(prefix = PREFIX)
 public class TokenManagerProperties {
 
-    public static final String PREFIX = "jiayu.token-manager";
+    public static final String PREFIX = "spring.token-manager";
 
     private String host = "localhost";
     private String password;

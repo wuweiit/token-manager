@@ -67,7 +67,7 @@ TokenManager会通过类型自动判断调用那个接口实现，当然我们�
 
 ```
 
-jiayu:
+spring:
   ## 三方Token管理器
   token-manager:
     # TokenManager自动装配开关

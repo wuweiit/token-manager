@@ -1,7 +1,7 @@
 
 
 
-jiayu:
+spring:
   ## 三方Token管理器
   token-manager:
     enabled: true
