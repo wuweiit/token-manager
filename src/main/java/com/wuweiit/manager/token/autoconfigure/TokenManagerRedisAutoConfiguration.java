@@ -7,6 +7,7 @@ import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -32,6 +33,8 @@ public class TokenManagerRedisAutoConfiguration {
     @Resource
     private TokenManagerProperties tokenManagerProperties;
 
+    @Resource
+    private ApplicationContext applicationContext;
 
     @Bean
     @ConditionalOnProperty(prefix = TokenManagerProperties.PREFIX, value = "autoRefresh", havingValue = "true")
@@ -41,7 +44,7 @@ public class TokenManagerRedisAutoConfiguration {
         listenerContainer.setConnectionFactory(tokenManagerRedisConnectionFactory());
         //监听指定db0,db1的set事件
         String topic = String.format("__keyevent@%d__:expired", db);
-        listenerContainer.addMessageListener(new RedisTokenRefreshListener(), new PatternTopic(topic));
+        listenerContainer.addMessageListener(new RedisTokenRefreshListener(applicationContext), new PatternTopic(topic));
         return listenerContainer;
     }
 

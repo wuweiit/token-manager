@@ -15,6 +15,10 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.util.Map;
 
+/**
+ * WeixinMPAPI
+ * @author marker
+ */
 public class WeixinMPAPI extends BaseAPI implements TokenAPI {
 
 
