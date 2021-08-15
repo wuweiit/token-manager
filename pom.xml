@@ -9,7 +9,7 @@
     <artifactId>token-manager</artifactId>
     <version>0.0.1</version>
 
-
+    <name>token-manager</name>
     <description>token-manager is third token manager</description>
     <url>https://github.com/wuweiit/token-manager</url>
 
@@ -187,6 +187,15 @@
         </license>
     </licenses>
 
+    <!-- 项目成员团体信息 -->
+    <developers>
+        <developer>
+            <name>marker</name>
+            <email>admin@wuweibi.com</email>
+            <organization>wuweiit</organization>
+            <organizationUrl>http://www.yl-blog.com</organizationUrl>
+        </developer>
+    </developers>
 
     <!--  发布管理  -->
     <distributionManagement>
