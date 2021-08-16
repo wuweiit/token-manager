@@ -4,6 +4,7 @@ package com.wuweibi.manager.token;
 import com.alibaba.fastjson.JSON;
 import com.wuweibi.manager.token.bean.TokenInfo;
 import com.wuweibi.manager.token.constant.ConfigType;
+import com.wuweibi.manager.token.exception.GetTokenException;
 import com.wuweibi.manager.token.lock.LockHandler;
 import com.wuweibi.manager.token.lock.impl.RedisLockHandler;
 import com.wuweibi.manager.token.api.TokenAPI;
@@ -220,18 +221,17 @@ public class TokenManager {
      * @param identify 标识
      */
     public void refreshToken(String identify) {
-
         if (!secretConfig.isEnableRefreshToken()) {
             log.info("updateToken() {} not open RefreshToken", this.secretConfig.getType());
             return;
         }
-//        this.getToken(identify);
+        throw new RuntimeException("没有实refreshToken");
     }
 
 
     /**
      * 清理Token，
-     * 如果是单个认证信息的可使用
+     * 如果是独立（非多用户的）认证信息的可使用
      */
     public void cleanToken() {
         cleanToken(this.secretConfig.getAppid());

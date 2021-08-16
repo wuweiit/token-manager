@@ -8,6 +8,7 @@ import com.wuweibi.manager.token.handler.LogClientHttpRequestInterceptor;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -29,6 +30,7 @@ import java.util.Map;
 @Configuration
 @ConditionalOnProperty(prefix = TokenManagerProperties.PREFIX, value = "enabled", havingValue = "true")
 //@AutoConfigureAfter(RedisAutoConfiguration.class)
+@ImportAutoConfiguration(TokenManagerRedisAutoConfiguration.class)
 @EnableConfigurationProperties(TokenManagerProperties.class)
 public class TokenManagerAutoConfiguration {
 
@@ -42,16 +44,6 @@ public class TokenManagerAutoConfiguration {
     @Resource(name = "tokenManagerRedisConnectionFactory")
     private RedisConnectionFactory redisConnectionFactory;
 
-
-    public void init(ApplicationContext applicationContext) {
-
-//
-//        BeanDefinitionRegistry beanFactory = (BeanDefinitionRegistry) applicationContext.getParentBeanFactory();
-//
-//        beanFactory.registerBeanDefinition(beanName, singletonObject);
-
-
-    }
 
     /**
      * 这个方法返回Runnable只是一个幌子，最重要的是执行方法里面的代码

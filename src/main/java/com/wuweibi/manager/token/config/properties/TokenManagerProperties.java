@@ -3,6 +3,7 @@ package com.wuweibi.manager.token.config.properties;
 import com.wuweibi.manager.token.SecretConfig;
 import lombok.Data;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +34,10 @@ public class TokenManagerProperties {
 
 
     private String codec = "org.redisson.codec.JsonJacksonCodec";
+
+    private RedisProperties.Lettuce lettuce = new RedisProperties.Lettuce();
+
+
 
     /**
      * 配置Map

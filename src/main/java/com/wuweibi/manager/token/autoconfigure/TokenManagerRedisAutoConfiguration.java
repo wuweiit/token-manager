@@ -7,6 +7,7 @@ import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,11 +69,14 @@ public class TokenManagerRedisAutoConfiguration {
                 .socketOptions(SocketOptions.builder().keepAlive(true).build())
                 .build();
 
+        RedisProperties.Lettuce lettuce = tokenManagerProperties.getLettuce();
+
+
         GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
-        genericObjectPoolConfig.setMaxIdle(2);
-        genericObjectPoolConfig.setMinIdle(3);
-        genericObjectPoolConfig.setMaxTotal(50);
-        genericObjectPoolConfig.setMaxWaitMillis(10000);
+        genericObjectPoolConfig.setMaxIdle(lettuce.getPool().getMaxIdle());
+        genericObjectPoolConfig.setMinIdle(lettuce.getPool().getMinIdle());
+        genericObjectPoolConfig.setMaxTotal(lettuce.getPool().getMaxActive());
+        genericObjectPoolConfig.setMaxWaitMillis(lettuce.getPool().getMaxWait().toMillis());
         genericObjectPoolConfig.setTimeBetweenEvictionRunsMillis(100);
 
         LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
