@@ -18,19 +18,15 @@ import java.io.IOException;
  */
 @Slf4j
 public class LogClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+
+
     @Override
     public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes, ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
-
-
         log.info("{} {}", httpRequest.getMethod(), httpRequest.getURI());
         long startTime =System.currentTimeMillis();
         ClientHttpResponse clientHttpResponse = clientHttpRequestExecution.execute(httpRequest,bytes);
         long etime = System.currentTimeMillis() - startTime;
-
-
-
         log.info("req time={} resp: {}", etime, "");
-
         return clientHttpResponse;
     }
 }

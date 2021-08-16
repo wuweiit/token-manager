@@ -7,7 +7,12 @@ package com.wuweibi.manager.token.exception;
  */
 public class GetTokenException extends RuntimeException {
 
-    public GetTokenException(String errmsg) {
-        super("getToken faild reason:" + errmsg);
+
+    /**
+     * 构造
+     * @param msg 错误信息
+     */
+    public GetTokenException(String msg) {
+        super("getToken faild reason:" + msg);
     }
 }

@@ -13,6 +13,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Redis key 监听器
+ *
+ * @author marker
+ */
 @Slf4j
 public class RedisTokenRefreshListener implements MessageListener {
 

@@ -5,6 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * TokenInfo,记录Token信息。包含accessToken 、refreshToken 、过期时间等。
+ *
+ * @author marker
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -58,9 +58,7 @@ public class TokenManager {
     private LockHandler lockHandler;
 
 
-    private TokenManager() {
-
-    }
+    private TokenManager() {}
 
 
     /**
