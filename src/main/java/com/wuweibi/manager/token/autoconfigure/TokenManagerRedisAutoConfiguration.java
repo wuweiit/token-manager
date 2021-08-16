@@ -82,7 +82,7 @@ public class TokenManagerRedisAutoConfiguration {
         genericObjectPoolConfig.setMinIdle(lettuce.getPool().getMinIdle());
         genericObjectPoolConfig.setMaxTotal(lettuce.getPool().getMaxActive());
         genericObjectPoolConfig.setMaxWaitMillis(lettuce.getPool().getMaxWait().toMillis());
-//        genericObjectPoolConfig.setTimeBetweenEvictionRunsMillis(100);
+        genericObjectPoolConfig.setTimeBetweenEvictionRunsMillis(lettuce.getShutdownTimeout().toMillis());
 
         LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
                 .clientOptions(clientOptions)
