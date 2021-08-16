@@ -43,9 +43,10 @@ public class TokenManagerTest {
 //        TokenManager tokenManager = okenManager(secretConfig, restTemplate, redisConnectionFactory);
 
 
-        TokenInfo token = tokenManager.getToken("dasdasdsa");
+        TokenInfo token = tokenManager.getToken("");
 
 
+        tokenManager.cleanToken("");
 
 
 

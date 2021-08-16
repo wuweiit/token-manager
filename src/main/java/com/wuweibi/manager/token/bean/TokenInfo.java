@@ -24,4 +24,5 @@ public class TokenInfo {
      * accessToken  生命周期 单位秒
      */
     private long expiresIn;
+
 }

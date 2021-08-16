@@ -6,6 +6,7 @@ import com.wuweibi.manager.token.SecretConfig;
 import com.wuweibi.manager.token.api.adapter.BaseAPI;
 import com.wuweibi.manager.token.bean.TokenInfo;
 import com.wuweibi.manager.token.api.TokenAPI;
+import com.wuweibi.manager.token.exception.GetTokenException;
 import lombok.SneakyThrows;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.http.HttpEntity;
@@ -49,6 +50,11 @@ public class WeixinMPAPI extends BaseAPI implements TokenAPI {
 
 //{"access_token":" -hZ9B-zxQrBkqolf5O- ","expires_in":7200}
         JSONObject jsonObject = JSON.parseObject(result);
+        String errcode = jsonObject.getString("errcode");
+        if(null != errcode){
+            String errmsg = jsonObject.getString("errmsg");
+            throw new GetTokenException(errmsg);
+        }
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setAccessToken(jsonObject.getString("access_token"));
         tokenInfo.setExpiresIn(jsonObject.getLong("expires_in"));

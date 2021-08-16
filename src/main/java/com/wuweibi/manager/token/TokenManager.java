@@ -57,17 +57,16 @@ public class TokenManager {
     private LockHandler lockHandler;
 
 
-    private TokenManager( ){
+    private TokenManager() {
 
     }
-
 
 
     /**
      * 创建TokenManager
      *
-     * @param restTemplate restTemplate
-     * @param secretConfig 配置
+     * @param restTemplate           restTemplate
+     * @param secretConfig           配置
      * @param redisConnectionFactory redis链接工厂
      */
     public TokenManager(@Autowired @Qualifier("tokenManagerRestTemplate") RestTemplate restTemplate,
@@ -78,13 +77,17 @@ public class TokenManager {
 
         // 选择API实现
         if (ConfigType.WEIXIN.equals(secretConfig.getType())) {
-            tokenAPI = new WeixinMPAPI(restTemplate) ;
+            tokenAPI = new WeixinMPAPI(restTemplate);
         }
 
     }
 
 
-
+    /**
+     * 获取Token
+     *
+     * @return TokenInfo token信息
+     */
     public TokenInfo getToken() {
         return this.getToken("");
     }
@@ -93,7 +96,7 @@ public class TokenManager {
      * 获取Token的简化
      *
      * @param params 参数
-     * @return TokenInfo
+     * @return TokenInfo token信息
      */
     public TokenInfo getToken(String params) {
         Map<String, Object> paramsMap = new HashMap<>(2);
@@ -107,7 +110,7 @@ public class TokenManager {
      * 目前还 存在线程安全问题
      *
      * @param params 关键参数
-     * @return TokenInfo
+     * @return TokenInfo token信息
      */
     public TokenInfo getToken(Map<String, Object> params) {
         String identify = (String) params.get("tag");
@@ -175,9 +178,9 @@ public class TokenManager {
     /**
      * 获取缓存中的TokenInfo数据
      *
-     * @param keyBytes
-     * @param redisConnection
-     * @return TokenInfo
+     * @param keyBytes        keyBytes
+     * @param redisConnection redis链接
+     * @return TokenInfo token信息
      */
     private TokenInfo getTokenInfo(byte[] keyBytes, RedisConnection redisConnection) {
         byte[] bytes = redisConnection.get(keyBytes);
@@ -194,10 +197,11 @@ public class TokenManager {
     /**
      * 设置TokenAPi实现
      * 这里是在需要自己实现TokenAPI时使用
+     *
      * @param tokenAPI
      */
     public void setTokenAPI(TokenAPI tokenAPI) {
-        if(this.tokenAPI != null){
+        if (this.tokenAPI != null) {
             log.warn("TokenManager has tokenAPi impl！！！use custom tokenAPI.");
         }
         this.tokenAPI = tokenAPI;
@@ -212,12 +216,13 @@ public class TokenManager {
     /**
      * 更新Token
      * 暂时未完全实现自动刷新
+     *
      * @param identify 标识
      */
     public void refreshToken(String identify) {
 
-        if(!secretConfig.isEnableRefreshToken()){
-            log.info("updateToken() {} not open RefreshToken",this.secretConfig.getType());
+        if (!secretConfig.isEnableRefreshToken()) {
+            log.info("updateToken() {} not open RefreshToken", this.secretConfig.getType());
             return;
         }
 //        this.getToken(identify);
@@ -234,6 +239,7 @@ public class TokenManager {
 
     /**
      * 多认证token 清除Token
+     *
      * @param identify 标识
      */
     public void cleanToken(String identify) {
@@ -241,7 +247,6 @@ public class TokenManager {
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
 
         RedisConnection redisConnection = redisConnectionFactory.getConnection();
-
 
         // 增加锁控制并发
         String lockey = String.format(CacheKey.MANAGER_LOCK, identify);
@@ -262,4 +267,6 @@ public class TokenManager {
         }
 
     }
+
+
 }
