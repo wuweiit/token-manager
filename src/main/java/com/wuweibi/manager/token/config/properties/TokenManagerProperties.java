@@ -21,7 +21,6 @@ import static com.wuweibi.manager.token.config.properties.TokenManagerProperties
 @Data
 @RefreshScope
 @Configuration
-@SpringBootConfiguration
 @ConfigurationProperties(prefix = PREFIX)
 public class TokenManagerProperties {
 

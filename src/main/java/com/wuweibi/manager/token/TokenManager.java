@@ -2,6 +2,8 @@ package com.wuweibi.manager.token;
 
 
 import com.alibaba.fastjson.JSON;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.wuweibi.manager.token.bean.TokenInfo;
 import com.wuweibi.manager.token.constant.ConfigType;
 import com.wuweibi.manager.token.exception.GetTokenException;
@@ -57,10 +59,13 @@ public class TokenManager {
      */
     private LockHandler lockHandler;
 
+    /**
+     * 一级缓存
+     */
+    private Cache<String, TokenInfo> l1Cache;
 
-    private TokenManager() {
 
-    }
+    private TokenManager() {  }
 
 
     /**
@@ -80,6 +85,13 @@ public class TokenManager {
         if (ConfigType.WEIXIN.equals(secretConfig.getType())) {
             tokenAPI = new WeixinMPAPI(restTemplate);
         }
+
+
+        // 初始化缓存
+        l1Cache = Caffeine.newBuilder()
+                .expireAfterWrite(secretConfig.getLifecycleTimeOffset(), TimeUnit.SECONDS)
+                .maximumSize(10_000)
+                .build();
 
     }
 
@@ -126,10 +138,21 @@ public class TokenManager {
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
         byte[] key2Bytes = key2.getBytes(StandardCharsets.UTF_8);
 
-        RedisConnection redisConnection = redisConnectionFactory.getConnection();
+
+
+        RedisConnection redisConnection = null;
 
         // 先取一次数据，如果有就返回
         if (secretConfig.isCacheEnable()) {
+            redisConnection = redisConnectionFactory.getConnection();
+
+            // 一级缓存读取
+            TokenInfo tokenInfoL1Cahce = l1Cache.getIfPresent(key);
+            if(tokenInfoL1Cahce!=null){
+                return tokenInfoL1Cahce;
+            }
+
+            // 二级缓存读取
             TokenInfo tokenInfo = getTokenInfo(keyBytes, redisConnection);
             if (tokenInfo != null) return tokenInfo;
         }
@@ -144,6 +167,13 @@ public class TokenManager {
         try {
             // 因为前面的请求可能会等待情况，所以需要再次检查是否有缓存
             if (secretConfig.isCacheEnable()) {
+                // 一级缓存读取
+                TokenInfo tokenInfoL1Cahce = l1Cache.getIfPresent(key);
+                if(tokenInfoL1Cahce!=null){
+                    return tokenInfoL1Cahce;
+                }
+
+                // 二级缓存读取
                 TokenInfo tokenInfo = getTokenInfo(keyBytes, redisConnection);
                 if (tokenInfo != null) return tokenInfo;
             }
@@ -152,17 +182,19 @@ public class TokenManager {
             TokenInfo tokenInfo = tokenAPI.getToken(secretConfig, params);
             if (secretConfig.isCacheEnable()) {
                 // 预检查
-                if (tokenInfo.getExpiresIn() <= secretConfig.getOffsetTime()) {
+                if (tokenInfo.getExpiresIn() <= secretConfig.getOffsetTime().getSeconds()) {
                     throw new RuntimeException("Token生命周期小于偏移时间");
                 }
+                long cycleTime = tokenInfo.getExpiresIn() - secretConfig.getOffsetTime().getSeconds();
                 // 存储Redis 并记录生命周期
                 byte[] bytes = JSON.toJSONString(tokenInfo).getBytes(StandardCharsets.UTF_8);
                 redisConnection.set(keyBytes, bytes);
-                redisConnection.expire(keyBytes, tokenInfo.getExpiresIn() - secretConfig.getOffsetTime());
+                redisConnection.expire(keyBytes, cycleTime);
+                l1Cache.put(key, tokenInfo);
 
-                // 刷新Token的机制key 快60秒销毁，销毁会被监听并刷新Token
+                // 刷新Token的机制key 快到60秒销毁，销毁会被监听并刷新Token
                 redisConnection.set(key2Bytes, bytes);
-                redisConnection.expire(key2Bytes, tokenInfo.getExpiresIn() - secretConfig.getOffsetTime() - 60);
+                redisConnection.expire(key2Bytes, cycleTime - 60);
             }
             return tokenInfo;
         } catch (Exception e) {
