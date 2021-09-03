@@ -65,7 +65,8 @@ public class TokenManager {
     private Cache<String, TokenInfo> l1Cache;
 
 
-    private TokenManager() {}
+    private TokenManager() {
+    }
 
 
     /**
@@ -75,7 +76,7 @@ public class TokenManager {
      * @param secretConfig           配置
      * @param redisConnectionFactory redis链接工厂
      */
-    public TokenManager(@Autowired @Qualifier("tokenManagerRestTemplate") RestTemplate restTemplate,
+    public TokenManager(RestTemplate restTemplate,
                         SecretConfig secretConfig, RedisConnectionFactory redisConnectionFactory) {
         this.secretConfig = secretConfig;
         this.redisConnectionFactory = redisConnectionFactory;
@@ -87,7 +88,7 @@ public class TokenManager {
         }
 
 
-        // 初始化缓存
+        // 统一的生命周期可启用，初始化缓存 1万个
         l1Cache = Caffeine.newBuilder()
                 .expireAfterWrite(secretConfig.getLifecycleTimeOffset(), TimeUnit.SECONDS)
                 .maximumSize(10_000)
@@ -139,37 +140,36 @@ public class TokenManager {
         byte[] key2Bytes = key2.getBytes(StandardCharsets.UTF_8);
 
 
-
         RedisConnection redisConnection = null;
 
-        // 先取一次数据，如果有就返回
-        if (secretConfig.isCacheEnable()) {
-            redisConnection = redisConnectionFactory.getConnection();
+        String lockKey = null;
+        try {
+            // 先取一次数据，如果有就返回
+            if (secretConfig.isCacheEnable()) {
+                // 一级缓存读取
+                TokenInfo tokenInfoL1Cache = l1Cache.getIfPresent(key);
+                if (tokenInfoL1Cache != null) {
+                    return tokenInfoL1Cache;
+                }
 
-            // 一级缓存读取
-            TokenInfo tokenInfoL1Cahce = l1Cache.getIfPresent(key);
-            if(tokenInfoL1Cahce!=null){
-                return tokenInfoL1Cahce;
+                redisConnection = redisConnectionFactory.getConnection();
+                // 二级缓存读取
+                TokenInfo tokenInfo = getTokenInfo(keyBytes, redisConnection);
+                if (tokenInfo != null) return tokenInfo;
             }
 
-            // 二级缓存读取
-            TokenInfo tokenInfo = getTokenInfo(keyBytes, redisConnection);
-            if (tokenInfo != null) return tokenInfo;
-        }
+            // 增加锁控制并发 10s拿不到锁
+            lockKey = String.format(CacheKey.MANAGER_LOCK, identify);
+            boolean status = lockHandler.tryLock(lockKey, 10, TimeUnit.SECONDS);
+            if (!status) {
+                throw new RuntimeException("服务器繁忙");
+            }
 
-        // 增加锁控制并发
-        String lockey = String.format(CacheKey.MANAGER_LOCK, identify);
-        boolean status = lockHandler.tryLock(lockey, 10, TimeUnit.SECONDS);
-        if (!status) {
-            throw new RuntimeException("服务器繁忙");
-        }
-
-        try {
             // 因为前面的请求可能会等待情况，所以需要再次检查是否有缓存
             if (secretConfig.isCacheEnable()) {
                 // 一级缓存读取
                 TokenInfo tokenInfoL1Cahce = l1Cache.getIfPresent(key);
-                if(tokenInfoL1Cahce!=null){
+                if (tokenInfoL1Cahce != null) {
                     return tokenInfoL1Cahce;
                 }
 
@@ -201,8 +201,12 @@ public class TokenManager {
             log.error("", e);
             throw new RuntimeException(e);
         } finally {
-            lockHandler.unLock(lockey);
-            redisConnection.close();
+            if (lockKey != null) {
+                lockHandler.unLock(lockKey);
+            }
+            if (redisConnection != null) {
+                redisConnection.close();
+            }
         }
 
     }

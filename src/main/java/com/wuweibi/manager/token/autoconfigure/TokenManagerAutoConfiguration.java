@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -26,9 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * TokenManager 自动装配配置类
+ *
+ * @author marker
+ */
 @Configuration
 @ConditionalOnProperty(prefix = TokenManagerProperties.PREFIX, value = "enabled", havingValue = "true")
-@ImportAutoConfiguration(TokenManagerRedisAutoConfiguration.class)
+@Import(TokenManagerRedisAutoConfiguration.class)
 @EnableConfigurationProperties(TokenManagerProperties.class)
 public class TokenManagerAutoConfiguration {
 
@@ -96,40 +103,6 @@ public class TokenManagerAutoConfiguration {
         return restTemplate;
     }
 
-//    @Bean("waibaoTokenManager")
-//    @ConditionalOnProperty(name = TokenManagerProperties.PREFIX + ".configMap.waibao.type", havingValue = "WAIBAO")
-//    public TokenManager beanWaiBao() {
-//        Map<String, SecretConfig> configMap = tokenManagerProperties.getConfigMap();
-//        TokenManager tokenManager = new TokenManager(configMap.get("waibao"), restTemplate(),redisConnectionFactory);
-//        return tokenManager;
-//    }
-//
-//
-//    /**
-//     * 微信小程序 Token管理器 自动装配
-//     *
-//     * @return
-//     */
-//    @Bean("weixinMpTokenManager")
-//    @ConditionalOnProperty(name = TokenManagerProperties.PREFIX + ".configMap.weixinMp.type", havingValue = "WEIXIN_MP")
-//    public TokenManager weixinMpTokenManager() {
-//        Map<String, SecretConfig> configMap = tokenManagerProperties.getConfigMap();
-//        TokenManager tokenManager = new TokenManager(configMap.get("weixinMp"), restTemplate(), redisConnectionFactory);
-//        return tokenManager;
-//    }
-//
-//
-//    /**
-//     * 冥想设备Token管理器 自动装配
-//     *
-//     * @return
-//     */
-//    @Bean("brainCoTokenManager")
-//    @ConditionalOnProperty(name = TokenManagerProperties.PREFIX + ".configMap.brainCo.type", havingValue = "BRAIN_CO")
-//    public TokenManager brainCoTokenManager() {
-//        Map<String, SecretConfig> configMap = tokenManagerProperties.getConfigMap();
-//        TokenManager tokenManager = new TokenManager(configMap.get("brainCo"),restTemplate(), redisConnectionFactory);
-//        return tokenManager;
-//    }
+
 
 }

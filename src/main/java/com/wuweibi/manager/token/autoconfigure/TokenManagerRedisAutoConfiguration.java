@@ -21,8 +21,10 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import javax.annotation.Resource;
 
 
+
 /**
- * 自动装配TokenManager
+ * TokenManager 自动装配配置类
+ * 主要装配RedisConnectionFactory
  *
  * @author marker
  */
@@ -55,7 +57,7 @@ public class TokenManagerRedisAutoConfiguration {
      *
      * @return
      */
-    @Bean(name = "tokenManagerRedisConnectionFactory")
+    @Bean("tokenManagerRedisConnectionFactory")
     public RedisConnectionFactory tokenManagerRedisConnectionFactory() {
         return createRedisConnectionFactory(tokenManagerProperties.getDatabase());
     }
