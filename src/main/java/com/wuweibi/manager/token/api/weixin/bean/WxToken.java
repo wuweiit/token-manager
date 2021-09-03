@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class WxToken extends TokenInfo {
+
     private Integer errcode;
+
     private String errmsg;
 }

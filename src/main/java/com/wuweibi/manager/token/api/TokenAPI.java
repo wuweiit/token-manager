@@ -15,16 +15,16 @@ public interface TokenAPI {
 
     /**
      * 获取Token的通用接口
-     * @param secretConfig
-     * @param params
+     * @param secretConfig 配置信息
+     * @param params 参数
      * @return
      */
     TokenInfo getToken(SecretConfig secretConfig, Map<String, Object> params);
 
     /**
      * 刷新Token
-     * @param secretConfig
-     * @param params
+     * @param secretConfig 配置信息
+     * @param params 参数
      * @return
      */
     default TokenInfo refreshToken(SecretConfig secretConfig, Map<String, Object> params){return null;}

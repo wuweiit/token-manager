@@ -12,6 +12,7 @@ spring:
     password : ${TOKEN_REDIS_PASSWORD:xxx}
     # redis数据索引 默认14
     database : ${TOKEN_REDIS_DB:13}
+    # redis端口
     port: ${TOKEN_REDIS_PORT:6379}
     lettuce:
       #在关闭客户端连接之前等待任务处理完成的最长时间，在这之后，无论任务是否执行完成，都会被执行器关闭，默认100ms
@@ -30,7 +31,7 @@ spring:
     configMap:
 
       # 微信Token接口配置
-      weixinMp:
+      weixin:
         type: WEIXIN
         appid: wx03698c0a99f50cfb
         appsecret: 82aee19d923384fcda0be1ad9f23619c

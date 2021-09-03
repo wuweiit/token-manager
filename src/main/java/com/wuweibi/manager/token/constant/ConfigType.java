@@ -2,7 +2,7 @@ package com.wuweibi.manager.token.constant;
 
 
 /**
- * CacheKey
+ * ConfigType
  *
  * @author marker
  */

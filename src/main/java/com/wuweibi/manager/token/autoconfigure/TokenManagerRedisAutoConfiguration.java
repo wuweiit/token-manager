@@ -43,13 +43,18 @@ public class TokenManagerRedisAutoConfiguration {
         int db = tokenManagerProperties.getDatabase();
         RedisMessageListenerContainer listenerContainer = new RedisMessageListenerContainer();
         listenerContainer.setConnectionFactory(tokenManagerRedisConnectionFactory());
-        //监听指定db0,db1的set事件
+        //监听指定dbindex的事件
         String topic = String.format("__keyevent@%d__:expired", db);
         listenerContainer.addMessageListener(new RedisTokenRefreshListener(applicationContext), new PatternTopic(topic));
         return listenerContainer;
     }
 
 
+    /**
+     * Redis链接工厂
+     *
+     * @return
+     */
     @Bean(name = "tokenManagerRedisConnectionFactory")
     public RedisConnectionFactory tokenManagerRedisConnectionFactory() {
         return createRedisConnectionFactory(tokenManagerProperties.getDatabase());
@@ -77,7 +82,7 @@ public class TokenManagerRedisAutoConfiguration {
         genericObjectPoolConfig.setMinIdle(lettuce.getPool().getMinIdle());
         genericObjectPoolConfig.setMaxTotal(lettuce.getPool().getMaxActive());
         genericObjectPoolConfig.setMaxWaitMillis(lettuce.getPool().getMaxWait().toMillis());
-        genericObjectPoolConfig.setTimeBetweenEvictionRunsMillis(100);
+        genericObjectPoolConfig.setTimeBetweenEvictionRunsMillis(lettuce.getShutdownTimeout().toMillis());
 
         LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
                 .clientOptions(clientOptions)

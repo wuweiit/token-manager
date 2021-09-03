@@ -18,6 +18,7 @@ import java.util.Map;
 
 /**
  * WeixinMPAPI
+ *
  * @author marker
  */
 public class WeixinMPAPI extends BaseAPI implements TokenAPI {
@@ -41,17 +42,17 @@ public class WeixinMPAPI extends BaseAPI implements TokenAPI {
 
         // build http headers
         HttpHeaders headers = new HttpHeaders();
-//        headers.add("x-auth-token","123");
+        //        headers.add("x-auth-token","123");
 
         HttpEntity httpEntity = new HttpEntity<String>(headers);
 
         // send request and get response
         String result = restTemplate.getForObject(uri, String.class);
 
-//{"access_token":" -hZ9B-zxQrBkqolf5O- ","expires_in":7200}
+        //{"access_token":" -hZ9B-zxQrBkqolf5O- ","expires_in":7200}
         JSONObject jsonObject = JSON.parseObject(result);
         String errcode = jsonObject.getString("errcode");
-        if(null != errcode){
+        if (null != errcode) {
             String errmsg = jsonObject.getString("errmsg");
             throw new GetTokenException(errmsg);
         }

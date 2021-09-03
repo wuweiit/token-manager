@@ -26,10 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
 @ConditionalOnProperty(prefix = TokenManagerProperties.PREFIX, value = "enabled", havingValue = "true")
-//@AutoConfigureAfter(RedisAutoConfiguration.class)
 @ImportAutoConfiguration(TokenManagerRedisAutoConfiguration.class)
 @EnableConfigurationProperties(TokenManagerProperties.class)
 public class TokenManagerAutoConfiguration {

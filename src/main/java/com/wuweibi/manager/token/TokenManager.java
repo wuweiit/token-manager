@@ -65,7 +65,7 @@ public class TokenManager {
     private Cache<String, TokenInfo> l1Cache;
 
 
-    private TokenManager() {  }
+    private TokenManager() {}
 
 
     /**
