@@ -53,7 +53,7 @@ TokenManager原理图如下所示：
 <dependency>
     <groupId>com.wuweibi</groupId>
     <artifactId>token-manager</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```  
 
