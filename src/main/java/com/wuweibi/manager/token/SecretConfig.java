@@ -12,8 +12,17 @@ import java.time.Duration;
 @Data
 public class SecretConfig {
 
-    private static final long DEFAULT_OFFSET_TIME = 60 * 60 * 24 + 180;
-    private static final long DEFAULT_LIFECYCLE_TIME = 604800;
+    /**
+     * 默认偏移时间量 秒
+     */
+    private static final Duration DEFAULT_OFFSET_TIME = Duration.ofSeconds(120);
+
+    /**
+     * 默认的Token生命周期7天
+     */
+    private static final Duration DEFAULT_LIFECYCLE_TIME = Duration.ofSeconds(604800);
+
+
 
     /**
      * 调用接口域名地址
@@ -28,12 +37,12 @@ public class SecretConfig {
     /**
      * 秘钥
      */
-    private String appsecret;
+    private String appSecret;
 
     /**
-     * 配置Token类型
+     * 配置Token类型 例如：WEIXIN
      */
-    private ConfigType type;
+    private String type;
 
     /**
      * 是否启用Token缓存
@@ -46,16 +55,21 @@ public class SecretConfig {
     private boolean enableRefreshToken = false;
 
     /**
-     * 偏移时间 默认1天 单位秒
+     * 多环境 支持 默认 false
+     */
+    private boolean multiEnv = false;
+
+    /**
+     * 偏移时间 默认120秒 单位秒
      * 用于防止Token过期问题
      */
-    private Duration offsetTime =  Duration.ofSeconds(DEFAULT_OFFSET_TIME);
+    private Duration offsetTime = DEFAULT_OFFSET_TIME;
 
     /**
      * 三方提供的Token生命周期 单位：秒 ，默认7天
      * 为了使用生命周期的Cache，必须配置的项
      */
-    private Duration lifecycleTime = Duration.ofSeconds(DEFAULT_LIFECYCLE_TIME);
+    private Duration lifecycleTime = DEFAULT_LIFECYCLE_TIME;
 
 
     /**

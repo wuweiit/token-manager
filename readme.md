@@ -13,6 +13,10 @@ TokenManager原理图如下所示：
 
 开发者：marker
 
+### TokenManger更新历史
+
+[更新历史文档](#history.md)
+
 ### TokenManager特性
 
 - **多环境Token共享**

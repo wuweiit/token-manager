@@ -12,6 +12,7 @@ import com.wuweibi.manager.token.lock.impl.RedisLockHandler;
 import com.wuweibi.manager.token.api.TokenAPI;
 import com.wuweibi.manager.token.api.weixin.WeixinMPAPI;
 import com.wuweibi.manager.token.constant.CacheKey;
+import com.wuweibi.manager.token.utils.SpringUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class TokenManager {
 
 
     /**
-     * TokenAPI
+     * TokenAPI 策略
      */
     private TokenAPI tokenAPI;
 
@@ -86,7 +87,6 @@ public class TokenManager {
         if (ConfigType.WEIXIN.equals(secretConfig.getType())) {
             tokenAPI = new WeixinMPAPI(restTemplate);
         }
-
 
         // 统一的生命周期可启用，初始化缓存 1万个
         l1Cache = Caffeine.newBuilder()
@@ -134,8 +134,11 @@ public class TokenManager {
         if (secretConfig.getAppid() != null) {
             identify = secretConfig.getAppid() + (("".equals(identify)) ? "" : "" + identify);
         }
-        String key = String.format(CacheKey.TOKEN, secretConfig.getType().name(), identify);
-        String key2 = String.format(CacheKey.REFRESH_TOKEN, secretConfig.getType().name(), identify); // token过期key
+        // 判断多环境
+        String profile = getEnvironment();
+
+        String key = String.format(CacheKey.TOKEN, profile, secretConfig.getType(), identify);
+        String key2 = String.format(CacheKey.REFRESH_TOKEN, profile, secretConfig.getType(), identify); // token过期key
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
         byte[] key2Bytes = key2.getBytes(StandardCharsets.UTF_8);
 
@@ -147,10 +150,10 @@ public class TokenManager {
             // 先取一次数据，如果有就返回
             if (secretConfig.isCacheEnable()) {
                 // 一级缓存读取
-                TokenInfo tokenInfoL1Cache = l1Cache.getIfPresent(key);
-                if (tokenInfoL1Cache != null) {
-                    return tokenInfoL1Cache;
-                }
+//                TokenInfo tokenInfoL1Cache = l1Cache.getIfPresent(key);
+//                if (tokenInfoL1Cache != null) {
+//                    return tokenInfoL1Cache;
+//                }
 
                 redisConnection = redisConnectionFactory.getConnection();
                 // 二级缓存读取
@@ -159,7 +162,7 @@ public class TokenManager {
             }
 
             // 增加锁控制并发 10s拿不到锁
-            lockKey = String.format(CacheKey.MANAGER_LOCK, identify);
+            lockKey = String.format(CacheKey.MANAGER_LOCK, profile, identify);
             boolean status = lockHandler.tryLock(lockKey, 10, TimeUnit.SECONDS);
             if (!status) {
                 throw new RuntimeException("服务器繁忙");
@@ -168,10 +171,10 @@ public class TokenManager {
             // 因为前面的请求可能会等待情况，所以需要再次检查是否有缓存
             if (secretConfig.isCacheEnable()) {
                 // 一级缓存读取
-                TokenInfo tokenInfoL1Cahce = l1Cache.getIfPresent(key);
-                if (tokenInfoL1Cahce != null) {
-                    return tokenInfoL1Cahce;
-                }
+//                TokenInfo tokenInfoL1Cahce = l1Cache.getIfPresent(key);
+//                if (tokenInfoL1Cahce != null) {
+//                    return tokenInfoL1Cahce;
+//                }
 
                 // 二级缓存读取
                 TokenInfo tokenInfo = getTokenInfo(keyBytes, redisConnection);
@@ -183,7 +186,7 @@ public class TokenManager {
             if (secretConfig.isCacheEnable()) {
                 // 预检查
                 if (tokenInfo.getExpiresIn() <= secretConfig.getOffsetTime().getSeconds()) {
-                    throw new RuntimeException("Token生命周期小于偏移时间");
+                    throw new GetTokenException("Token生命周期小于偏移时间");
                 }
                 long cycleTime = tokenInfo.getExpiresIn() - secretConfig.getOffsetTime().getSeconds();
                 // 存储Redis 并记录生命周期
@@ -194,12 +197,12 @@ public class TokenManager {
 
                 // 刷新Token的机制key 快到60秒销毁，销毁会被监听并刷新Token
                 redisConnection.set(key2Bytes, bytes);
-                redisConnection.expire(key2Bytes, cycleTime - 60);
+                redisConnection.expire(key2Bytes, cycleTime);
             }
             return tokenInfo;
         } catch (Exception e) {
             log.error("", e);
-            throw new RuntimeException(e);
+            throw new GetTokenException(e.getMessage(), e);
         } finally {
             if (lockKey != null) {
                 lockHandler.unLock(lockKey);
@@ -240,13 +243,14 @@ public class TokenManager {
     public void setTokenAPI(TokenAPI tokenAPI) {
         if (this.tokenAPI != null) {
             log.warn("TokenManager has tokenAPi impl！！！use custom tokenAPI.");
+            throw new GetTokenException("TokenManager has tokenAPi impl");
         }
         this.tokenAPI = tokenAPI;
     }
 
 
     public String getType() {
-        return this.secretConfig.getType().name();
+        return this.secretConfig.getType();
     }
 
 
@@ -261,7 +265,7 @@ public class TokenManager {
             log.info("updateToken() {} not open RefreshToken", this.secretConfig.getType());
             return;
         }
-        throw new RuntimeException("没有实refreshToken");
+        throw new GetTokenException("没有实现refreshToken");
     }
 
 
@@ -273,22 +277,25 @@ public class TokenManager {
         cleanToken(this.secretConfig.getAppid());
     }
 
+
     /**
      * 多认证token 清除Token
      *
      * @param identify 标识
      */
     public void cleanToken(String identify) {
-        String key = String.format(CacheKey.TOKEN, secretConfig.getType().name(), identify);
+        String profile = getEnvironment();
+
+        String key = String.format(CacheKey.TOKEN, profile, secretConfig.getType(), identify);
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
 
         RedisConnection redisConnection = redisConnectionFactory.getConnection();
 
         // 增加锁控制并发
-        String lockey = String.format(CacheKey.MANAGER_LOCK, identify);
+        String lockey = String.format(CacheKey.MANAGER_LOCK, profile, identify);
         boolean status = lockHandler.tryLock(lockey, 10, TimeUnit.SECONDS);
         if (!status) {
-            throw new RuntimeException("服务器繁忙");
+            throw new GetTokenException("服务器繁忙");
         }
 
         try {
@@ -304,5 +311,18 @@ public class TokenManager {
 
     }
 
+
+    /**
+     * 获取环境参数
+     *
+     * @return
+     */
+    private String getEnvironment() {
+        String profile = "";
+        if (secretConfig.isMultiEnv()) {
+            profile = String.format(":%s", SpringUtil.getProfilesActive());
+        }
+        return profile;
+    }
 
 }

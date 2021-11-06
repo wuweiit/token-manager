@@ -32,7 +32,7 @@ public class WeixinMPAPI extends BaseAPI implements TokenAPI {
     @Override
     public TokenInfo getToken(SecretConfig secretConfig, Map<String, Object> params) {
         String appid = secretConfig.getAppid();
-        String secret = secretConfig.getAppsecret();
+        String secret = secretConfig.getAppSecret();
 
         URI uri = new URIBuilder("https://api.weixin.qq.com/cgi-bin/token")
                 .addParameter("grant_type", "client_credential")
@@ -44,7 +44,7 @@ public class WeixinMPAPI extends BaseAPI implements TokenAPI {
         HttpHeaders headers = new HttpHeaders();
         //        headers.add("x-auth-token","123");
 
-        HttpEntity httpEntity = new HttpEntity<String>(headers);
+//        HttpEntity httpEntity = new HttpEntity<String>(headers);
 
         // send request and get response
         String result = restTemplate.getForObject(uri, String.class);
