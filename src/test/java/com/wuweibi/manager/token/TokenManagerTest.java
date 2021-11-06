@@ -1,13 +1,10 @@
 package com.wuweibi.manager.token;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.wuweibi.manager.token.bean.TokenInfo;
 import com.wuweibi.manager.token.config.properties.TokenManagerProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;

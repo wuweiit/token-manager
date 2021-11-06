@@ -1,7 +1,6 @@
 package com.wuweibi.manager.token;
 
 
-import com.wuweibi.manager.token.constant.ConfigType;
 import lombok.Data;
 
 import java.time.Duration;
@@ -74,7 +73,7 @@ public class SecretConfig {
 
     /**
      * 获取程序记录Token的生命周期
-     * @return
+     * @return long
      */
     public long getLifecycleTimeOffset() {
         return lifecycleTime.plusSeconds( - offsetTime.getSeconds()).getSeconds();

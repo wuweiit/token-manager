@@ -27,9 +27,9 @@ public final class SpringUtil implements ApplicationContextAware {
 
     /**
      * 根据类型获取bean
-     *
-     * @return
-     * @throws
+     * @param clazz 类
+     * @param <T> T
+     * @return T
      */
     public static <T> T getBean(Class<T> clazz) {
         try {
@@ -44,20 +44,20 @@ public final class SpringUtil implements ApplicationContextAware {
      * 根据beanname获取bean
      *
      * @param name beanName
-     * @return
-     * @throws
+     * @param <T> T
+     * @return T
      */
-    public static Object getBean(String name) {
-        return applicationContext.getBean(name);
+    public static <T> T getBean(String name) {
+        return (T) applicationContext.getBean(name);
     }
 
 
     /**
      * 根据beanname获取bean和类型获取
-     *
      * @param name beanName
-     * @return
-     * @throws
+     * @param clazz clazz
+     * @param <T> T
+     * @return T
      */
     public static <T> T getBean(String name, Class<T> clazz) {
         return applicationContext.getBean(name, clazz);
@@ -66,7 +66,7 @@ public final class SpringUtil implements ApplicationContextAware {
 
     /**
      * 是否为生产环境
-     * @return
+     * @return boolean
      */
     public static boolean isProduction(){
         Environment env = getBean(Environment.class);
@@ -79,7 +79,7 @@ public final class SpringUtil implements ApplicationContextAware {
 
     /**
      * 是否为生产环境
-     * @return
+     * @return String
      */
     public static String getProfilesActive(){
         Environment env = getBean(Environment.class);

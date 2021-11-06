@@ -9,6 +9,7 @@ import java.util.Map;
 /**
  * ttokenapi通用接口
  *
+ * @author marker
  */
 public interface TokenAPI {
 
@@ -17,7 +18,7 @@ public interface TokenAPI {
      * 获取Token的通用接口
      * @param secretConfig 配置信息
      * @param params 参数
-     * @return
+     * @return TokenInfo
      */
     TokenInfo getToken(SecretConfig secretConfig, Map<String, Object> params);
 
@@ -25,7 +26,7 @@ public interface TokenAPI {
      * 刷新Token
      * @param secretConfig 配置信息
      * @param params 参数
-     * @return
+     * @return TokenInfo
      */
     default TokenInfo refreshToken(SecretConfig secretConfig, Map<String, Object> params){return null;}
 

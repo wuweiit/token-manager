@@ -2,21 +2,17 @@ package com.wuweibi.manager.token;
 
 
 import com.alibaba.fastjson.JSON;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import com.wuweibi.manager.token.api.TokenAPI;
+import com.wuweibi.manager.token.api.weixin.WeixinMPAPI;
 import com.wuweibi.manager.token.bean.TokenInfo;
+import com.wuweibi.manager.token.constant.CacheKey;
 import com.wuweibi.manager.token.constant.ConfigType;
 import com.wuweibi.manager.token.exception.GetTokenException;
 import com.wuweibi.manager.token.lock.LockHandler;
 import com.wuweibi.manager.token.lock.impl.RedisLockHandler;
-import com.wuweibi.manager.token.api.TokenAPI;
-import com.wuweibi.manager.token.api.weixin.WeixinMPAPI;
-import com.wuweibi.manager.token.constant.CacheKey;
 import com.wuweibi.manager.token.utils.SpringUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.web.client.RestTemplate;
@@ -63,7 +59,7 @@ public class TokenManager {
     /**
      * 一级缓存
      */
-    private Cache<String, TokenInfo> l1Cache;
+//    private Cache<String, TokenInfo> l1Cache;
 
 
     private TokenManager() {
@@ -89,10 +85,10 @@ public class TokenManager {
         }
 
         // 统一的生命周期可启用，初始化缓存 1万个
-        l1Cache = Caffeine.newBuilder()
-                .expireAfterWrite(secretConfig.getLifecycleTimeOffset(), TimeUnit.SECONDS)
-                .maximumSize(10_000)
-                .build();
+//        l1Cache = Caffeine.newBuilder()
+//                .expireAfterWrite(secretConfig.getLifecycleTimeOffset(), TimeUnit.SECONDS)
+//                .maximumSize(10_000)
+//                .build();
 
     }
 
@@ -193,7 +189,7 @@ public class TokenManager {
                 byte[] bytes = JSON.toJSONString(tokenInfo).getBytes(StandardCharsets.UTF_8);
                 redisConnection.set(keyBytes, bytes);
                 redisConnection.expire(keyBytes, cycleTime);
-                l1Cache.put(key, tokenInfo);
+//                l1Cache.put(key, tokenInfo);
 
                 // 刷新Token的机制key 快到60秒销毁，销毁会被监听并刷新Token
                 redisConnection.set(key2Bytes, bytes);
@@ -238,7 +234,7 @@ public class TokenManager {
      * 设置TokenAPi实现
      * 这里是在需要自己实现TokenAPI时使用
      *
-     * @param tokenAPI
+     * @param tokenAPI tokenAPI
      */
     public void setTokenAPI(TokenAPI tokenAPI) {
         if (this.tokenAPI != null) {

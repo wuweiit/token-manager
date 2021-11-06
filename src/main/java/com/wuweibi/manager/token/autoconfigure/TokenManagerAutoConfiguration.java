@@ -7,8 +7,6 @@ import com.wuweibi.manager.token.config.properties.TokenManagerProperties;
 import com.wuweibi.manager.token.handler.LogClientHttpRequestInterceptor;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -52,6 +50,8 @@ public class TokenManagerAutoConfiguration {
 
     /**
      * 这个方法返回Runnable只是一个幌子，最重要的是执行方法里面的代码
+     * @param applicationContext applicationContext
+     * @return Runnable
      */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -89,7 +89,7 @@ public class TokenManagerAutoConfiguration {
     /**
      * 外包 Token管理器 自动装配
      *
-     * @return
+     * @return RestTemplate
      */
     @Bean("tokenManagerRestTemplate")
     public RestTemplate restTemplate() {

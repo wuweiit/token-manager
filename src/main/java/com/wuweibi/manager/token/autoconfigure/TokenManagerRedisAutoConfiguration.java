@@ -55,7 +55,7 @@ public class TokenManagerRedisAutoConfiguration {
     /**
      * Redis链接工厂
      *
-     * @return
+     * @return RedisConnectionFactory
      */
     @Bean("tokenManagerRedisConnectionFactory")
     public RedisConnectionFactory tokenManagerRedisConnectionFactory() {
@@ -65,6 +65,8 @@ public class TokenManagerRedisAutoConfiguration {
 
     /**
      * 创建redis连接工厂
+     * @param dbIndex db
+     * @return LettuceConnectionFactory
      */
     public LettuceConnectionFactory createRedisConnectionFactory(int dbIndex) {
         String host = tokenManagerProperties.getHost();
