@@ -9,7 +9,7 @@ spring:
     # redis链接地址
     host: ${TOKEN_REDIS_HOST:192.168.1.6}
     # redis密码
-    password : ${TOKEN_REDIS_PASSWORD:xxx}
+    password : ${TOKEN_REDIS_PASSWORD:masterPass123.}
     # redis数据索引 默认14
     database : ${TOKEN_REDIS_DB:13}
     # redis端口
@@ -35,6 +35,6 @@ spring:
         type: WEIXIN
         # 多环境配置
         multiEnv: false
-        appid: wx03698c0a99f50cfb
-        appSecret: 82aee19d923384fcda0be1ad9f23619c
+        appid: wxa209955ea23321e1
+        appSecret: eff76e503bb7b4eb3e4ecdc70a2c7b17
         offsetTime: 60

@@ -6,8 +6,11 @@ import com.wuweibi.manager.token.listener.RedisTokenRefreshListener;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +31,10 @@ import javax.annotation.Resource;
  *
  * @author marker
  */
-@Configuration
+@Configuration(proxyBeanMethods = true)
 @ConditionalOnProperty(prefix = TokenManagerProperties.PREFIX, value = "enabled", havingValue = "true")
+@AutoConfigureAfter(RedisAutoConfiguration.class)
+@EnableConfigurationProperties(TokenManagerProperties.class)
 public class TokenManagerRedisAutoConfiguration {
 
 

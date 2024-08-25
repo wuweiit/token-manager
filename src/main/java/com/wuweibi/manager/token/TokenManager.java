@@ -80,7 +80,7 @@ public class TokenManager {
         this.lockHandler = new RedisLockHandler(redisConnectionFactory);
 
         // 选择API实现
-        if (ConfigType.WEIXIN.equals(secretConfig.getType())) {
+        if (ConfigType.WEIXIN.toString().equals(secretConfig.getType())) {
             tokenAPI = new WeixinMPAPI(restTemplate);
         }
 

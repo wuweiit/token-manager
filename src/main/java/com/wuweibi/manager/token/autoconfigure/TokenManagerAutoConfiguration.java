@@ -5,17 +5,15 @@ import com.wuweibi.manager.token.SecretConfig;
 import com.wuweibi.manager.token.TokenManager;
 import com.wuweibi.manager.token.config.properties.TokenManagerProperties;
 import com.wuweibi.manager.token.handler.LogClientHttpRequestInterceptor;
+import org.checkerframework.checker.initialization.qual.Initialized;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
@@ -31,11 +29,10 @@ import java.util.Map;
  *
  * @author marker
  */
-@Configuration
+@Configuration(proxyBeanMethods = true)
 @ConditionalOnProperty(prefix = TokenManagerProperties.PREFIX, value = "enabled", havingValue = "true")
-@Import(TokenManagerRedisAutoConfiguration.class)
-@EnableConfigurationProperties(TokenManagerProperties.class)
-public class TokenManagerAutoConfiguration {
+@Import({TokenManagerRedisAutoConfiguration.class })
+public class TokenManagerAutoConfiguration     {
 
 
     @Resource
@@ -54,7 +51,6 @@ public class TokenManagerAutoConfiguration {
      * @return Runnable
      */
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
     public Runnable dynamicConfiguration(ApplicationContext applicationContext) throws Exception {
         ConfigurableApplicationContext context = (ConfigurableApplicationContext) applicationContext;
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) context.getBeanFactory();
@@ -102,7 +98,6 @@ public class TokenManagerAutoConfiguration {
 
         return restTemplate;
     }
-
 
 
 }

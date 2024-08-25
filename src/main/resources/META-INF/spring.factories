@@ -1,4 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.wuweibi.manager.token.utils.SpringUtil, \
 com.wuweibi.manager.token.autoconfigure.TokenManagerRedisAutoConfiguration, \
 com.wuweibi.manager.token.autoconfigure.TokenManagerAutoConfiguration
