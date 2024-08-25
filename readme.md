@@ -102,3 +102,19 @@ spring:
         appsecret: 82aee19d923384fcda0be1ad9f23619c
         offsetTime: 60
 ```
+
+使用代码
+
+```  
+
+// 注入控制器或service
+  @Lazy
+  @Resource
+  private TokenManager tokenManager;
+
+// 调用获取token （内部会自动维护过期时间）
+TokenInfo tokenInfo = tokenManager.getToken();
+BufferedImage bufferedImage = WxaAPI.getwxacodeunlimit(tokenInfo.getAccessToken(), getwxacodeunlimit);
+
+
+```  
