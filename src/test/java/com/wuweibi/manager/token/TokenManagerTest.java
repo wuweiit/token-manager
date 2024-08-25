@@ -37,8 +37,8 @@ public class TokenManagerTest {
     private TokenManager weixinTokenManager;
 
 
-    @Resource(name = "weixinMpTokenManager")
-    private TokenManager tokenManager;
+//    @Resource(name = "weixinMpTokenManager")
+//    private TokenManager tokenManager;
 
 
     @Test

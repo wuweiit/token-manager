@@ -36,5 +36,5 @@ spring:
         # 多环境配置
         multiEnv: false
         appid: wx03698c0a99f50cfb
-        appsecret: 82aee19d923384fcda0be1ad9f23619c
+        appSecret: 82aee19d923384fcda0be1ad9f23619c
         offsetTime: 60

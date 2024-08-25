@@ -7,7 +7,7 @@
 
     <groupId>com.wuweibi</groupId>
     <artifactId>token-manager</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <name>token-manager</name>
     <description>token-manager is third token manager</description>
@@ -23,13 +23,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot</artifactId>
-            <version>2.3.10.RELEASE</version>
+            <version>2.6.5</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-context</artifactId>
-            <version>2.2.6.RELEASE</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-context</artifactId>-->
+<!--            <version>2.2.6.RELEASE</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.3.10.RELEASE</version>
+            <version>2.6.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>5.2.14.RELEASE</version>
+            <version>5.3.20</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -64,13 +64,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>5.2.11.RELEASE</version>
+            <version>5.3.20</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
-            <version>2.3.6.RELEASE</version>
+            <version>2.6.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
